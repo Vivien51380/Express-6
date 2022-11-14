@@ -1,5 +1,33 @@
 const database = require("./database");
 
+const getUsers = (req, res) => {
+  let sql = "select * from users";
+  const sqlValues = [];
+
+  if (req.query.language != null) {
+    sql += " where language = ?";
+    sqlValues.push(req.query.language);
+
+    if (req.query.city != null) {
+      sql += " and city = ?";
+      sqlValues.push(req.query.city);
+    }
+  } else if (req.query.city != null) {
+    sql += " where city = ?";
+    sqlValues.push(req.query.city);
+  }
+
+  database
+    .query(sql, sqlValues)
+    .then(([users]) => {
+      res.json(users);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send("Error retrieving data from database");
+    });
+};
+
 const getUsersById = (req, res) => {
   const id = parseInt(req.params.id);
 
@@ -18,17 +46,6 @@ const getUsersById = (req, res) => {
     });
 };
 
-const getUsers = (req, res) => {
-  database
-    .query("select * from users")
-    .then(([users]) => {
-      res.json(users);
-    })
-    .catch((err) => {
-      console.error(err);
-      res.status(200);
-    });
-};
 
 const postUser = (req, res) => {
   const { firstname, lastname, email, city, language } = req.body;
@@ -39,7 +56,6 @@ const postUser = (req, res) => {
       [firstname, lastname, email, city, language]
     )
     .then(([result]) => {
-      // wait for it
       res.location(`/api/users/${result.insertId}`).sendStatus(201);
     })
     .catch((err) => {
@@ -63,7 +79,7 @@ const updateUser = (req, res) => {
   })
   .catch((err) => {
     console.error(err);
-    res.status(500).send("Error editing the movie");
+    res.status(402).send("Error editing the movie");
   });
 };
 
@@ -81,7 +97,7 @@ const deleteUser = (req, res) => {
     })
     .catch((err) => {
       console.error(err);
-      res.status(500).send("Error deleting user");
+      res.status(402).send("Error deleting user");
     });
 };
 
