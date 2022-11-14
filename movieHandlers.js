@@ -65,7 +65,7 @@ const updateMovie = (req, res) => {
     })
     .catch((err) => {
       console.error(err);
-      res.status(500).send("Error editing the movie");
+      res.status(402).send("Error editing the movie");
     });
 };
 
@@ -83,7 +83,7 @@ const deleteMovie = (req, res) => {
     })
     .catch((err) => {
       console.error(err);
-      res.status(500).send("Error deleting the movie");
+      res.status(402).send("Error deleting the movie");
     });
 };
 
